@@ -1,0 +1,21 @@
+{% extends "mylitmus/base.html" %}
+
+{% block content %}
+<div id="contenido">
+		<h3>{{product.name}} - Pruebas disponibles</h3>
+		<p class="warning">Si no lo has hecho aún, <a href="{{product.downloadlink}}">descarga la versión</a> que se está probando y revisa <a href="{% url help %}">la página de ayuda para probadores</a>.</p>
+		<p>A continuación tienes una lista de pruebas a realizar para comprobar la calidad de la traducción; puedes realizar todas las que desees. Debajo de cada prueba se muestra el porcentaje global de realización de la misma; aunque estén al 100% es recomendable que las realices. Las pruebas marcadas con el icono (<img src="/media/images/button_ok.png" alt="tick verde" />) son las que ya has realizado en esta sesión.</p>
+
+{% if request.session.alreadyhelped %}
+<p class="success">¡Gracias por probar los productos de Mozilla! Debajo tienes más pruebas que puedes realizar.</p>
+{% endif %}
+		<ul>
+			{% for category in categs %}
+			<li {% if category.alreadytested %}class="done"{% endif %}>
+			<a href="{% url mylitmus.views.tests category_id=category.id,product_id=category.productID.id %}">{{category.name}}: {{category.description}}</a>
+			<div class="graph"><strong class="bar" style="width: {{category.covered}}%;">{{category.covered|floatformat}}%</strong></div>
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endblock %}

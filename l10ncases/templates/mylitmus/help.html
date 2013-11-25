@@ -1,0 +1,30 @@
+{% extends "mylitmus/base.html" %}
+{% block version %}
+{% endblock %}
+
+{% block content %}
+	<div id="contenido">
+		<h3>Ayuda para probadores</h3>
+		<p>Antes de la salida de las versiones definitivas de los productos Mozilla es un buen momento para pulir los pequeños detalles en la traducción de la aplicación, por ello instamos a los usuarios interesados en estos "Días de prueba" para que pongan su granito de arena y ayuden a los grupos de traducción a probar estas versiones, encontrar fallos, mejoras o sugerencias.</p>
+		<p><strong>¿Qué necesito saber para ayudar?</strong></p>
+
+		<p>No necesitas ser un experto, simplemente tener un poco de tiempo para bajar la última versión de prueba del producto en cuestión y verificar qué tal está traducida.</p>
+
+		<p><strong>¿Cómo puedo ayudar?</strong></p>
+
+		<ul>
+			<li>Simplemente descarga la aplicación que desees ayudar en la prueba, en español de España (es-ES) o español de Argentina (es-AR), e instálala en tu ordenador.</li>
+			<li>Ahora, antes de abrirlo, deberías crear un perfil nuevo para usar sólo con la versión de prueba (recomendable), de esta forma no tocaremos tus datos tu perfil actual. Para ello, seguiremos los pasos que se indican en <a href="http://www.mozilla-hispano.org/documentacion/Preguntas_frecuentes_sobre_Firefox:Perfil#.C2.BFC.C3.B3mo_creo_un_nuevo_perfil.3F">la documentación de Mozilla Hispano</a>, teniendo en cuenta que debemos indicar la ruta completa al ejecutable de la aplicación, por ejemplo "C:\Archivos de programa\Mozilla Firefox 3 beta 5\firefox.exe" --ProfileManager y desmarcaremos la opción "No preguntar al inicio" para que podamos ejecutar tanto la versión de prueba como la versión que ya teníamos instalada.</li>
+			<li>Ahora ya podemos abrir la nueva versión con el perfil nuevo y poder hacer las pruebas pertinentes.</li>
+		</ul>
+
+		<p><strong>¿Qué pruebas debo realizar?</strong></p>
+		<p>Una vez que hayas elegido <a href="{% url products %}">el producto en la página correspondiente</a>, aparecerán una serie de casos a realizar, puedes realizar tantos como desees siguiendo las instrucciones en pantalla.</p>
+		<p>Adicionalmente se han abierto dos temas en los foros de los proyectos de traducción para que puedas comentar los resultados en el propio tema del foro.</p>
+
+		<ul>
+			<li><a href="http://www.mozilla-hispano.org/foro/viewforum.php?f=13">Foro para la traducción en español de España (es-ES)</a></li>
+			<li><a href="http://www.mozilla-hispano.org/foro/viewforum.php?f=15">Foro para la traducción en español de Argentina (es-AR)</a></li>
+		</ul>
+	</div>
+{% endblock %}

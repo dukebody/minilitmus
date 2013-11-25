@@ -1,0 +1,40 @@
+{% extends "mylitmus/base.html" %}
+
+{% block content %}
+<div id="contenido">
+	<h3>Información sobre {{ product }}</h3>
+	<p>Antes de continuar, necesitamos que confirmes los datos sobre la versión del producto con la que realizarás las pruebas, normalmente los datos autodetectados por defecto son correctos, pero preferimos que los confirmes.</p>
+	<form id="ver_form" action="." method="post">
+		<fieldset>
+			<legend>Datos autodetectados para {{ product }}</legend>
+				<p>Idioma: {{ form.locale }}</p>
+				<p>Sistema operativo: {{ form.os }}</p>
+			<div id="ver-help">
+					<div>
+						<p>Este número identifica la versión exacta del producto, puedes verificarlo desde el menú superior <em>Ayuda > Acerca de {{ product }}</em></p>
+					</div>
+			</div>
+			{% if form.buildID.errors %}
+				{% for error in form.buildID.errors %}
+				<p class="error">{{ error }}</p>
+				{% endfor %}
+			{% endif %}
+				<p>Build ID: {{ form.buildID }} <img alt="?" src="/media/images/question_mark.png" id="ver-help-trigger"/></p>
+
+
+			{{ form.captcha_question }}
+			{% if form.captcha_answer.errors %}
+				{% for error in form.captcha_answer.errors %}
+				<p class="error">{{ error }}</p>
+				{% endfor %}
+			{% endif %}
+			<p>{{ form.initial.captcha_question }} =
+			{{ form.captcha_answer}}
+			</p>
+
+		</fieldset>
+		<p><input type="submit" name="Guardar" value="Enviar"/></p>
+	</form>
+</div>
+
+{% endblock %}

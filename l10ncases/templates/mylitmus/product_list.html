@@ -1,0 +1,23 @@
+{% extends "mylitmus/base.html" %}
+{% block version %}
+{% endblock %}
+
+{% block content %}
+<div id="about">
+	<h3>Productos</h3>
+	<div id="productos">
+		{% if object_list %}
+		<p>Actualmente necesitamos realizar pruebas de calidad de traducción en diversos productos, elige el producto que quieres ayudar a probar para ver una lista de pruebas.</p>
+		<ul>
+			{% for product in object_list %}
+			<li><img class="logo" alt="{{product.name}}" 
+			src="{{ product.get_logo_url }}"/><a href="{% url mylitmus.views.categories product_id=product.id %}">{{product.name}} {{product.version}}</a><br />{{product.description}}</li>
+			{% endfor %}
+		</ul>
+		{% else %}
+		<p>Actualmente no necesitamos realizar pruebas de calidad de traducción en ningún producto. Vuelve más tarde.</p>
+		{% endif %}
+
+	</div>	
+</div>
+{% endblock %}

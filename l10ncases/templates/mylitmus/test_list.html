@@ -1,0 +1,29 @@
+{% extends "mylitmus/base.html" %}
+
+{% block content %}
+<div id="contenido">
+
+	<h3>{{category}}</h3>
+		<div id="breadcumbs"><p><a href="{% url products %}">Productos</a> > <a href="{% url categories product.id %}">{{ product }}</a> > {{ category.name }}</p></div>
+		<p>A continuación tienes una serie de casos prácticos que debes comprobar e indicar los resultados. En el caso de que algun caso encuentres algun, error deberás marcar la prueba correspondiente como "Fallido" y escribir en los comentarios exactamente qué pasó.</p>
+		<form action="." method="post">
+				{% for resultform in resultforms %}
+				<fieldset>
+					<p class="legend">{{resultform.testlabel|linebreaksbr}}</p>
+					{% for error in resultform.non_field_errors %}
+					<p class="error">{{ error }}</span>
+					{% endfor %}
+					<div class="results">
+						{{resultform.passed}}
+					</div>
+					<label>
+							Comentarios <small>(Si la prueba falló, por favor, indica por qué)</small>
+					</label>
+						{{ resultform.comments.errors}}{{resultform.comments}}
+				</fieldset>
+				{% endfor %}
+					<p><input type="submit" name="Guardar" value="Enviar"/></p>
+			</form>
+
+</div>
+{% endblock %}

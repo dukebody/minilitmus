@@ -1,0 +1,17 @@
+$(document).ready(function(){  
+
+
+// fly-in for the language change help text
+
+	$("div#ver-help").hide();
+
+	$("img#ver-help-trigger").hover( 
+		function() {
+			$("div#ver-help").fadeIn("slow");
+		},
+		function() {
+			$("div#ver-help").fadeOut("slow");
+		}
+	);
+});
+

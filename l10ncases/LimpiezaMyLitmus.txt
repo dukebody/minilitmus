@@ -1,0 +1,85 @@
+Introducción
+------------
+
+A continuación se documentan algunas operaciones de limpieza en las tablas de myLitmus / miniLitmus.
+
+Los ejemplos SQL usan el código de producto "3", que correspondía a Flock 1.2. Se usa una tabla auxiliar llamada del_aux_table para los borrados de filas de tablas que precisan hacer un JOIN.
+
+Crear la tabla auxiliar
+-----------------------
+
+CREATE TABLE IF NOT EXISTS `del_aux_table` (
+  `id` varchar(6) collate latin1_spanish_ci NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tabla temporal para eliminaciones';
+
+
+Contenido de la tabla de productos
+----------------------------------
+
+Id Nombre          Versión
+--------------------------
+1  Mozilla Firefox  3.0
+3  Flock            1.2
+5  Mozilla Firefox  3.5
+6  Thunderbird      3.0 Beta 3
+
+
+Listar todas las categorías de un producto
+------------------------------------------
+
+SELECT * FROM `mylitmus_category` WHERE `productID_id` = "3"
+
+Eliminar todas las categorías de un producto
+------------------------------------------
+
+DELETE * FROM `mylitmus_category` WHERE `productID_id` = "3"
+
+
+Listar todos los tests de un producto
+-------------------------------------
+
+SELECT * FROM mylitmus_test mlt LEFT JOIN mylitmus_category mlc ON mlt.categoryID_id = mlc.id WHERE mlc.productID_id = "3"
+
+Eliminar todos los tests de un producto
+---------------------------------------
+
+Esta operación requiere el uso de la tabla temporal del_aux_table.
+
+TRUNCATE TABLE 'del_aux_table'
+
+INSERT INTO del_aux_table (id) SELECT mlt.id FROM mylitmus_test mlt LEFT JOIN mylitmus_category mlc ON mlt.categoryID_id = mlc.id WHERE mlc.productID_id = "3"
+
+DELETE FROM mylitmus_test WHERE id in (SELECT id FROM del_aux_table)
+
+
+Listar todos los resultados de un producto
+------------------------------------------
+
+SELECT * FROM mylitmus_result mlr LEFT JOIN mylitmus_test mlt ON mlr.testID_id = mlt.id LEFT JOIN mylitmus_category mlc ON mlt.categoryID_id = mlc.id WHERE mlc.productID_id = "3"
+
+
+Eliminar todos los resultados de un producto
+--------------------------------------------
+
+Esta operación requiere el uso de la tabla temporal del_aux_table.
+
+TRUNCATE TABLE del_aux_table
+
+INSERT INTO del_aux_table (id) SELECT mlr.id FROM mylitmus_result mlr LEFT JOIN mylitmus_test mlt ON mlr.testID_id = mlt.id LEFT JOIN mylitmus_category mlc ON mlt.categoryID_id = mlc.id WHERE mlc.productID_id = "3"
+
+DELETE FROM mylitmus_result WHERE id in (SELECT id FROM del_aux_table)
+
+
+Listar todos los tests fallidos del producto 5 para es-ES
+---------------------------------------------------------
+
+SELECT * FROM mylitmus_result mlr LEFT JOIN mylitmus_test mlt ON mlr.testID_id = mlt.id LEFT JOIN mylitmus_category mlc ON mlt.categoryID_id = mlc.id WHERE mlc.productID_id = "5" AND mlr.locale = "es-ES" AND mlr.passed = "f"
+
+Borrar logs antiguos
+--------------------
+
+DELETE * FROM `django_admin_log` WHERE action_time < "2009-01-01 00:00:00"
+
+DELETE * FROM `django_session` WHERE expire_date < "2009-01-01 00:00:00"
+
