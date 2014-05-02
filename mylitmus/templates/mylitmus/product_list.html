@@ -11,7 +11,7 @@
 		<ul>
 			{% for product in object_list %}
 			<li><img class="logo" alt="{{product.name}}" 
-			src="{{ product.get_logo_url }}"/><a href="{% url mylitmus.views.categories product_id=product.id %}">{{product.name}} {{product.version}}</a><br />{{product.description}}</li>
+			src="{{ product.get_logo_url }}"/><a href="{% url 'mylitmus.views.categories' product_id=product.id %}">{{product.name}} {{product.version}}</a><br />{{product.description}}</li>
 			{% endfor %}
 		</ul>
 		{% else %}

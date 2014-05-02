@@ -1,12 +1,13 @@
+{% load staticfiles %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
 	<title>Control de calidad - Traducciones de Mozilla</title>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-	<link rel="stylesheet" type="text/css" href="/media/css/style.css" />
-	<script src="/media/js/jquery-1.2.3.pack.js" type="text/javascript"></script>
-	<script src="/media/js/functions.js" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="{% static "mylitmus/css/style.css" %}" />
+	<script src="{% static "mylitmus/js/jquery-1.2.3.pack.js" %}" type="text/javascript"></script>
+	<script src="{% static "mylitmus/js/functions.js" %}" type="text/javascript"></script>
 </head>
 
 <body>
@@ -17,9 +18,9 @@
 	<div class="c">
 		{% block topmenu %}
 		<ul id="hd-nav">
-			<li class="portada"><a title="Portada" href="{% url front-page %}">Portada</a></li>
-			<li class="productos"><a title="Productos" href="{% url products %}">Productos</a></li>
-			<li class="ayuda"><a title="Ayuda para probadores" href="{% url help %}">Ayuda</a></li>
+			<li class="portada"><a title="Portada" href="{% url 'frontpage' %}">Portada</a></li>
+			<li class="productos"><a title="Productos" href="{% url 'products' %}">Productos</a></li>
+			<li class="ayuda"><a title="Ayuda para probadores" href="{% url 'help' %}">Ayuda</a></li>
 		</ul>	
 		{% endblock %}
 	</div>
@@ -33,7 +34,7 @@
 		{% block version %}
 		{% if os and locale and buildID %}
 		<p>Para este producto, has selecionado el sistema operativo {{os|capfirst}}, el idioma {{ locale }} y el build ID {{buildID}}.
-		<a href="{% url version product.id %}">¿Quieres cambiarlo?</a>
+		<a href="{% url 'version' product.id %}">¿Quieres cambiarlo?</a>
 		</p>
 		{% endif %}
 		{% endblock %}

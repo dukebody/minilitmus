@@ -1,4 +1,4 @@
-from django.newforms.widgets import RadioFieldRenderer, RadioInput
+from django.forms.widgets import RadioFieldRenderer, RadioInput
 from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 from django.utils.html import conditional_escape

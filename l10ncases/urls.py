@@ -1,13 +1,12 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, include, url
+
+from django.contrib import admin
+admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Example:
-    # (r'', include('l10ncases.foo.urls')),
-     (r'^qa/', include('mylitmus.urls')),
-
-    # Uncomment this for admin:
-     (r'^qa/admin/', include('django.contrib.admin.urls')),
+    # Examples:
+    # url(r'^$', 'mylitmus.views.home', name='home'),
+    # url(r'^blog/', include('blog.urls')),
+    (r'^mylitmus/', include('mylitmus.urls')),
+    url(r'^admin/', include(admin.site.urls)),
 )
-
-
-handler404 = 'django.views.defaults.page_not_found'

@@ -1,4 +1,5 @@
 {% extends "mylitmus/base.html" %}
+{% load staticfiles %}
 
 {% block content %}
 <div id="contenido">
@@ -19,7 +20,7 @@
 				<p class="error">{{ error }}</p>
 				{% endfor %}
 			{% endif %}
-				<p>Build ID: {{ form.buildID }} <img alt="?" src="/media/images/question_mark.png" id="ver-help-trigger"/></p>
+				<p>Build ID: {{ form.buildID }} <img alt="?" src="{% static "mylitmus/images/question_mark.png" %}" id="ver-help-trigger"/></p>
 
 
 			{{ form.captcha_question }}
@@ -34,6 +35,8 @@
 
 		</fieldset>
 		<p><input type="submit" name="Guardar" value="Enviar"/></p>
+
+		{% csrf_token %}
 	</form>
 </div>
 

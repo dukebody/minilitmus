@@ -1,7 +1,7 @@
 from mylitmus.models import Product, Category, Test, Result
 from mylitmus.forms import ResultForm, VersionForm, VersionFormCaptcha
 from mylitmus.utils import copy_product_data
-from django.views.generic.list_detail import object_list, object_detail
+#from django.views.generic.list_detail import object_list, object_detail
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -22,6 +22,7 @@ def categories(request, product_id):
 	oskey = 'version-' + str(product.id) + '-os'
 	buildIDkey = 'version-' + str(product.id) + '-buildID'
 
+	# Check if user has already entered version info
 	try:
 		locale = request.session[localekey]
 		os = request.session[oskey]
@@ -50,7 +51,7 @@ def tests(request, product_id, category_id):
 	product = get_object_or_404(Product, pk=product_id, active=True)
 	category = Category.objects.get(pk=category_id)
 
-
+	# Check if user has already entered version info
 	localekey = 'version-' + str(product.id) + '-locale'
 	oskey = 'version-' + str(product.id) + '-os'
 	buildIDkey = 'version-' + str(product.id) + '-buildID'
