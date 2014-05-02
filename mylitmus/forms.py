@@ -2,34 +2,14 @@
 # -*- coding: utf-8 -*-
 
 from django import forms
-from mylitmus.models import Result
 from mylitmus.widgets import RadioFieldRendererPassed
 import re
 from random import randint
 
-OSES = (
-	('windows', 'Windows'),
-	('mac', 'Mac'),
-	('linux', 'Linux'),
-)
+from config import OSES, LOCALES, PASSED_CHOICES
 
-LOCALES = (
-	('es-AR', 'Español de Argentina'),
-	('es-BO', 'Español de Bolivia'),
-	('es-CL', 'Español de Chile'),
-	('es-CO', 'Español de Colombia'),
-	('es-ES', 'Español de España'),
-	('es-MX', 'Español de México'),
-	('es-PE', 'Español de Perú'),
-)
 
 class ResultForm(forms.Form):
-	PASSED_CHOICES = (
-			('n', 'No realizado'),
-			('t', 'Correcto'),
-			('f', 'Fallido'),
-	)
-
 	passed = forms.ChoiceField(choices=PASSED_CHOICES, initial='n', 
 			widget=forms.RadioSelect(renderer=RadioFieldRendererPassed))
 	comments = forms.CharField(widget=forms.Textarea(), required=False)

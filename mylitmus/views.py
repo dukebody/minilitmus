@@ -1,14 +1,14 @@
 from mylitmus.models import Product, Category, Test, Result
 from mylitmus.forms import ResultForm, VersionForm, VersionFormCaptcha
-from mylitmus.utils import copy_product_data
-#from django.views.generic.list_detail import object_list, object_detail
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from mylitmus.utils import copy_product_data, getVersion
+
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import user_passes_test
-import re
+
 
 # Create your views here.
 
@@ -17,17 +17,8 @@ def categories(request, product_id):
 	product = get_object_or_404(Product, pk=product_id, active=True)
 	categs = Category.objects.filter(productID=product_id)  
 
-
-	localekey = 'version-' + str(product.id) + '-locale'
-	oskey = 'version-' + str(product.id) + '-os'
-	buildIDkey = 'version-' + str(product.id) + '-buildID'
-
-	# Check if user has already entered version info
-	try:
-		locale = request.session[localekey]
-		os = request.session[oskey]
-		buildID = request.session[buildIDkey]
-	except KeyError:
+	version = getVersion(request, product_id)
+	if not version:
 		return HttpResponseRedirect(reverse('version', args=[product.id]))
 	
 	for categ in categs:
@@ -41,7 +32,7 @@ def categories(request, product_id):
 
 		categ.alreadytested = request.session.get('alreadytested-'+str(categ.id), False)
 	
-	return render_to_response('mylitmus/category_list.html', {'categs':categs, 'product':product,'locale':locale, 'os':os, 'buildID':buildID}, context_instance=RequestContext(request))
+	return render_to_response('mylitmus/category_list.html', {'categs':categs, 'product':product,'locale':version['locale'], 'os':version['os'], 'buildID':version['buildID']}, context_instance=RequestContext(request))
 	
 def tests(request, product_id, category_id):
 	tests = Test.objects.filter(categoryID=category_id, categoryID__productID=product_id)  # set of tests for this category 
@@ -51,20 +42,12 @@ def tests(request, product_id, category_id):
 	product = get_object_or_404(Product, pk=product_id, active=True)
 	category = Category.objects.get(pk=category_id)
 
-	# Check if user has already entered version info
-	localekey = 'version-' + str(product.id) + '-locale'
-	oskey = 'version-' + str(product.id) + '-os'
-	buildIDkey = 'version-' + str(product.id) + '-buildID'
-
-	try:
-		locale = request.session[localekey]
-		os = request.session[oskey]
-		buildID = request.session[buildIDkey]
-	except KeyError:
+	version = getVersion(request, product_id)
+	if not version:
 		return HttpResponseRedirect(reverse('version', args=[product.id]))
 
 	# validate cookie data
-	cookieForm = VersionForm({'locale':locale, 'os':os, 'buildID':buildID})
+	cookieForm = VersionForm({'locale':version['locale'], 'os':version['os'], 'buildID':version['buildID']})
 	if not cookieForm.is_valid():
 		return HttpResponseRedirect(reverse('version', args=[product.id]))
 
@@ -98,7 +81,7 @@ def tests(request, product_id, category_id):
 				if f.is_valid():
 					passed = f.cleaned_data['passed']
 					comments = f.cleaned_data['comments']
-					r = Result(testID=test, passed=passed, comments=comments, locale=locale, os=os, buildID=buildID)
+					r = Result(testID=test, passed=passed, comments=comments, locale=version['locale'], os=version['os'], buildID=version['buildID'])
 					r.save()
 				else:
 					allvalid = False
@@ -118,48 +101,16 @@ def tests(request, product_id, category_id):
 			f.testlabel = test.description
 			resultforms.append(f)
 
-	return render_to_response('mylitmus/test_list.html', {'tests':tests, 'resultforms':resultforms, 'product':product, 'category':category, 'locale':locale, 'os':os, 'buildID':buildID},context_instance=RequestContext(request))
+	return render_to_response('mylitmus/test_list.html', {'tests':tests, 'resultforms':resultforms, 'product':product, 'category':category, 'locale':version['locale'], 'os':version['os'], 'buildID':version['buildID']},context_instance=RequestContext(request))
 
 def version(request, product_id):
 	product = get_object_or_404(Product, pk=product_id, active=True)
 
+	localekey = 'version-' + str(product_id) + '-locale'
+	oskey = 'version-' + str(product_id) + '-os'
+	buildIDkey = 'version-' + str(product_id) + '-buildID'
 
-	localekey = 'version-' + str(product.id) + '-locale'
-	oskey = 'version-' + str(product.id) + '-os'
-	buildIDkey = 'version-' + str(product.id) + '-buildID'
-
-	# maps HTTP_ACCEPT_LANGUAGE to ISO lang codes
-	langcodes = {'es-ar':'es-AR', 'es-bo':'es-BO', 'es-cl':'es-CL', 'es-co':'es-CO', 'es-es':'es-ES', 'es-mx':'es-MX','es-pe':'es-PE',}
-	useragent = request.META['HTTP_USER_AGENT']
-
-	try:
-		locale = request.session[localekey]
-	except KeyError:
-		try:
-			langtoken = request.META['HTTP_ACCEPT_LANGUAGE'].split(',')[0].split(';')[0]
-		except KeyError:
-			langtoken = ''
-		locale = langcodes.get(langtoken, 'es-ES')
-
-	try:
-		os = request.session[oskey]
-	except KeyError:
-		if useragent.find("Linux") != 1:
-			os = "linux"
-		elif useragent.find("Mac") != 1:
-			os = "mac"
-		else:
-			os = "windows"
-
-	try:
-		buildID = request.session[buildIDkey]
-	except KeyError:
-		buildID_re = re.search(r'Gecko/(\d+)', useragent)
-		if buildID_re:
-			buildID = buildID_re.groups()[0]
-		else:
-			buildID = ''
-
+	version = getVersion(request, product_id, guess=True)
 
 	if request.method == 'POST':
 		postdata = request.POST
@@ -172,9 +123,9 @@ def version(request, product_id):
 			return HttpResponseRedirect(product.get_absolute_url())
 
 	else:
-		f = VersionFormCaptcha(initial={'locale':locale, 'os':os, 'buildID':buildID,})
+		f = VersionFormCaptcha(initial=version)
 
-	return render_to_response( 'mylitmus/version.html', {'form':f, 'product':product, 'locale':locale, 'os':os, 'buildID':buildID, }, context_instance=RequestContext(request) )
+	return render_to_response( 'mylitmus/version.html', {'form':f, 'product':product, 'locale':version['locale'], 'os':version['os'], 'buildID':version['buildID'], }, context_instance=RequestContext(request) )
 
 
 # the user can add categories and tests

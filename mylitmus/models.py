@@ -5,6 +5,8 @@ from django.db import models
 from django.db.models import permalink
 from django.core.urlresolvers import reverse
 
+from config import OSES, LOCALES, PASSED_CHOICES
+
 
 # Create your models here.
 class Product(models.Model):
@@ -44,29 +46,6 @@ class Test(models.Model):
 
 
 class Result(models.Model):
-    PASSED_CHOICES = (
-            ('n', 'No realizado'),
-            ('t', 'Correcto'),
-            ('f', 'Fallido'),
-    )
-
-
-    OSES = (
-            ('windows', 'Windows'),
-            ('mac', 'Mac'),
-            ('linux', 'Linux'),
-    )
-
-    LOCALES = (
-            ('es-AR', 'Español de Argentina'),
-            ('es-BO', 'Español de Bolivia'),
-            ('es-CL', 'Español de Chile'),
-            ('es-CO', 'Español de Colombia'),
-            ('es-ES', 'Español de España'),
-            ('es-MX', 'Español de México'),
-            ('es-PE', 'Español de Perú'),
-    )
-
     testID = models.ForeignKey(Test)
     date = models.DateTimeField(auto_now_add=True,)
     passed = models.CharField(max_length=1, choices=PASSED_CHOICES, default='n')
